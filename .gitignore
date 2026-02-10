@@ -24,9 +24,12 @@ profile.cov
 go.work
 go.work.sum
 
-# env file
-.env
-
 # Editor/IDE
 # .idea/
 # .vscode/
+**/config.yaml
+**/config.yml
+**/docker-compose-dev.yml
+**/docker-compose-mock-db.yml
+docker-compose.yml
+docker-compose-mock-db.yml
