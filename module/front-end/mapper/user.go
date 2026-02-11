@@ -8,7 +8,7 @@ import (
 )
 
 func InsertUserMapper(payload dto.UserPayload, data []string) (model.User, error) {
-	birthDate, err := time.Parse("02-01-2006", payload.Dob)
+	birthDate, err := time.Parse("2006-01-02", payload.Dob)
 	if err != nil {
 		return model.User{}, err
 	}

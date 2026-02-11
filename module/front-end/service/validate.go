@@ -16,7 +16,7 @@ func (s *Service) CheckFormatPreRegisterSVC(ctx context.Context, data *dto.UserP
 }
 
 func (s *Service) DOBCheckSVC(ctx context.Context, dob string) (string, error) {
-	_, errDob := time.Parse("02-01-2006", dob)
+	_, errDob := time.Parse("2006-01-02", dob)
 	if errDob != nil {
 		return "", errors.New("birth_date must be YYYY-MM-DD format")
 	}
