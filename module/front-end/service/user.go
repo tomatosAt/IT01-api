@@ -14,14 +14,18 @@ func (s *Service) UserSVC(ctx context.Context, data dto.UserPayload) (*dto.DataI
 	var result dto.DataInsertUser
 	// ENCRYPT ข้อมูล
 	encryptedData, _ := util.EncryptList(s.repo.AppCfg().Secret.EncryptKey, data.FirstNameTH, data.LastNameTH)
-	mapperPreRegister, err := mapper.InsertUserMapper(data, encryptedData)
-	if err != nil {
+	if err := s.repo.GetUserByFullNameAndDobRepo(ctx, nil, encryptedData[0], encryptedData[1], data.Dob); err != nil {
 		return &result, http.StatusBadRequest, err
+	} else {
+		mapperPreRegister, err := mapper.InsertUserMapper(data, encryptedData)
+		if err != nil {
+			return &result, http.StatusBadRequest, err
+		}
+		userRepo, err := s.repo.InsertUserRepo(ctx, nil, mapperPreRegister)
+		if err != nil {
+			return &result, http.StatusInternalServerError, errors.New("server error")
+		}
+		result = mapper.ResponseUserInsertMapper(userRepo)
 	}
-	userRepo, err := s.repo.InsertUserRepo(ctx, nil, mapperPreRegister)
-	if err != nil {
-		return &result, http.StatusInternalServerError, errors.New("server error")
-	}
-	result = mapper.ResponseUserInsertMapper(userRepo)
 	return &result, http.StatusOK, nil
 }

@@ -17,6 +17,7 @@ type Repository interface {
 	Log() *logrus.Entry
 	DB() *database.Client
 	InsertUserRepo(ctx context.Context, tx *gorm.DB, data model.User) (model.User, error)
+	GetUserByFullNameAndDobRepo(ctx context.Context, tx *gorm.DB, fNameTh, lNameTh, dob string) error
 }
 
 type Service interface {
