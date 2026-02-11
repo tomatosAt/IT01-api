@@ -9,6 +9,7 @@ import (
 	"github.com/tomatosAt/IT01-api/module/front-end/dto"
 	"github.com/tomatosAt/IT01-api/module/front-end/mapper"
 	"github.com/tomatosAt/IT01-api/pkg/util"
+	"gorm.io/gorm"
 )
 
 func (s *Service) UserSVC(ctx context.Context, data dto.UserPayload) (*dto.DataInsertUser, int, error) {
@@ -60,4 +61,36 @@ func (s *Service) DecryptDashboradUser(userList []model.User) ([]model.User, err
 		userList[i].LastNameTH = decryptData[1]
 	}
 	return userList, nil
+}
+
+func (s *Service) DecryptUserByID(user *model.User) error {
+	decryptData, err := util.DecryptList(
+		s.repo.AppCfg().Secret.EncryptKey,
+		user.FirstNameTH,
+		user.LastNameTH,
+	)
+	if err != nil {
+		return err
+	}
+	user.FirstNameTH = decryptData[0]
+	user.LastNameTH = decryptData[1]
+	return err
+}
+
+func (s *Service) UserDetailByIDSVC(ctx context.Context, userId string) (dto.DataDashBoardUser, int, error) {
+	var res dto.DataDashBoardUser
+	getUserByID, err := s.repo.GetUserByUserIDRepo(ctx, nil, userId)
+	if err != nil {
+		if err != gorm.ErrRecordNotFound {
+			return res, http.StatusInternalServerError, err
+		}
+	}
+	if getUserByID != nil {
+		res = mapper.ResponseUserByIDMapper(getUserByID)
+	}
+	if err := s.DecryptUserByID(getUserByID); err != nil {
+		return res, http.StatusInternalServerError, err
+	}
+	res = mapper.ResponseUserByIDMapper(getUserByID)
+	return res, http.StatusOK, nil
 }

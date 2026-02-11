@@ -30,3 +30,12 @@ func (h *Handler) UserDashBoardHandler(ctx *fiber.Ctx) error {
 	}
 	return util.HttpSuccess(ctx, status, res)
 }
+
+func (h *Handler) UserDetailHandler(ctx *fiber.Ctx) error {
+	idStr := ctx.Params("id")
+	res, status, err := h.svc.UserDetailByIDSVC(ctx.UserContext(), idStr)
+	if err != nil {
+		return util.HttpError(ctx, http.StatusInternalServerError, err.Error())
+	}
+	return util.HttpSuccess(ctx, status, res)
+}

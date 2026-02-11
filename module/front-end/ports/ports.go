@@ -19,10 +19,12 @@ type Repository interface {
 	InsertUserRepo(ctx context.Context, tx *gorm.DB, data model.User) (model.User, error)
 	GetUserByFullNameAndDobRepo(ctx context.Context, tx *gorm.DB, fNameTh, lNameTh, dob string) error
 	GetAllUserRepo(ctx context.Context, tx *gorm.DB, userList *[]model.User, limit int, offset int) error
+	GetUserByUserIDRepo(ctx context.Context, tx *gorm.DB, userID string) (*model.User, error)
 }
 
 type Service interface {
 	CheckFormatPreRegisterSVC(ctx context.Context, data *dto.UserPayload) error
 	UserSVC(ctx context.Context, data dto.UserPayload) (*dto.DataInsertUser, int, error)
 	DashboardUser(ctx context.Context, limit, page int) (dto.ResponseDataDashBoardUser, int, error)
+	UserDetailByIDSVC(ctx context.Context, userId string) (dto.DataDashBoardUser, int, error)
 }

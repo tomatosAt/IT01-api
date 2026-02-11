@@ -2,6 +2,7 @@ package mapper
 
 import (
 	"time"
+
 	"github.com/tomatosAt/IT01-api/model"
 	"github.com/tomatosAt/IT01-api/module/front-end/dto"
 )
@@ -29,6 +30,18 @@ func ResponseDashBoardUserMapper(user []model.User) dto.ResponseDataDashBoardUse
 	return dto.ResponseDataDashBoardUser{
 		AllUsers: dashboardUser,
 		Total:    len(user),
+	}
+}
+
+func ResponseUserByIDMapper(user *model.User) dto.DataDashBoardUser {
+	return dto.DataDashBoardUser{
+		ID:          user.Id.String(),
+		FirstNameTH: user.FirstNameTH,
+		LastNameTH:  user.LastNameTH,
+		FullNameTH:  user.FirstNameTH + " " + user.LastNameTH,
+		Dob:         user.BirthDate.Format("2006-01-02"),
+		Age:         CalculateAge(user.BirthDate),
+		Addresses:   user.Address,
 	}
 }
 

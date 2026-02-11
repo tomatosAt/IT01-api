@@ -49,3 +49,14 @@ func (r *Repository) InsertUserRepo(ctx context.Context, tx *gorm.DB, data model
 	}
 	return data, nil
 }
+
+func (r *Repository) GetUserByUserIDRepo(ctx context.Context, tx *gorm.DB, userID string) (*model.User, error) {
+	if tx == nil {
+		tx = r.DB().Ctx()
+	}
+	var user model.User
+	if err := tx.Where("id = ?", userID).First(&user).Error; err != nil {
+		return &user, err
+	}
+	return &user, nil
+}
