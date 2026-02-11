@@ -9,6 +9,7 @@ type serverCfg struct {
 	TimeoutWrite   time.Duration
 	TimeoutIdle    time.Duration
 	ServerHeader   string
+	AllowOrigins   string
 	ProxyHeader    string
 	EnableCORS     bool
 	ReadBufferSize int

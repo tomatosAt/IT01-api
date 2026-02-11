@@ -29,11 +29,17 @@ func (ctx *Context) InitFiberServer() {
 		ReadBufferSize:        ctx.Config.Server.ReadBufferSize,
 		BodyLimit:             ctx.Config.Server.BodyLimit,
 	}
-	r := fiber.New(cfg)
+	ctx.Router = fiber.New(cfg)
 	if ctx.Config.Server.EnableCORS {
 		ctx.log.Infoln("[*] Used fiber cors middleware")
-		r.Use(cors.New())
+		ctx.Router.Use(cors.New())
 	}
+	ctx.Router.Use(cors.New(cors.Config{
+		AllowOrigins:     ctx.Config.Server.AllowOrigins,
+		AllowMethods:     "GET,POST,PUT,DELETE,OPTIONS",
+		AllowHeaders:     "Origin, Content-Type, Accept, Authorization",
+		AllowCredentials: true,
+	}))
 }
 
 var serverErrorHandler = func(ctx *fiber.Ctx, err error) error {

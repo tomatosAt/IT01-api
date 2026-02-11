@@ -91,6 +91,7 @@ func LoadConfig(file string, version string) *Config {
 			TimeoutIdle:    util.ParseDuration(viper.GetString("server.timeout.idle")),
 			ServerHeader:   viper.GetString("server.header"),
 			ProxyHeader:    viper.GetString("server.proxy.header"),
+			AllowOrigins:   viper.GetString("server.allow_origins"),
 			EnableCORS:     viper.GetBool("server.enable.cors"),
 			ReadBufferSize: viper.GetInt("server.buffer.read"),
 			BodyLimit:      viper.GetInt("server.body_limit"),
