@@ -5,6 +5,7 @@ import (
 	"errors"
 	"net/http"
 
+	"github.com/tomatosAt/IT01-api/model"
 	"github.com/tomatosAt/IT01-api/module/front-end/dto"
 	"github.com/tomatosAt/IT01-api/module/front-end/mapper"
 	"github.com/tomatosAt/IT01-api/pkg/util"
@@ -28,4 +29,35 @@ func (s *Service) UserSVC(ctx context.Context, data dto.UserPayload) (*dto.DataI
 		result = mapper.ResponseUserInsertMapper(userRepo)
 	}
 	return &result, http.StatusOK, nil
+}
+
+func (s *Service) DashboardUser(ctx context.Context, limit, page int) (dto.ResponseDataDashBoardUser, int, error) {
+	var result dto.ResponseDataDashBoardUser
+	var user []model.User
+	offset := (page - 1) * limit
+	if err := s.repo.GetAllUserRepo(ctx, nil, &user, limit, offset); err != nil {
+		return result, http.StatusBadRequest, err
+	}
+	dataDecrypt, err := s.DecryptDashboradUser(user)
+	if err != nil {
+		return result, http.StatusBadRequest, err
+	}
+	result = mapper.ResponseDashBoardUserMapper(dataDecrypt)
+	return result, http.StatusOK, nil
+}
+
+func (s *Service) DecryptDashboradUser(userList []model.User) ([]model.User, error) {
+	if len(userList) == 0 {
+		return userList, nil
+	}
+	for i := range userList {
+		decryptData, _ := util.DecryptList(
+			s.repo.AppCfg().Secret.EncryptKey,
+			userList[i].FirstNameTH,
+			userList[i].LastNameTH,
+		)
+		userList[i].FirstNameTH = decryptData[0]
+		userList[i].LastNameTH = decryptData[1]
+	}
+	return userList, nil
 }

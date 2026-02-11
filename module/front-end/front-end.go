@@ -26,5 +26,5 @@ func addRouter(r fiber.Router, h *handler.Handler) {
 	v1 := r.Group("/v1")
 	preRegist := v1.Group("user")
 	preRegist.Post("", h.RegisterUserHandler) //add
-
+	preRegist.Get("", h.UserDashBoardHandler) //dashboard
 }
