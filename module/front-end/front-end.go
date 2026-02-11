@@ -25,6 +25,7 @@ func Create(app *app.Context) error {
 func addRouter(r fiber.Router, h *handler.Handler) {
 	v1 := r.Group("/v1")
 	preRegist := v1.Group("user")
-	preRegist.Post("", h.RegisterUserHandler) //add
-	preRegist.Get("", h.UserDashBoardHandler) //dashboard
+	preRegist.Post("", h.RegisterUserHandler)  //add
+	preRegist.Get("", h.UserDashBoardHandler)  //dashboard
+	preRegist.Get("/:id", h.UserDetailHandler) //get by id
 }
