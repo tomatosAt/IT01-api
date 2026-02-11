@@ -25,6 +25,20 @@ func (r *Repository) GetUserByFullNameAndDobRepo(ctx context.Context, tx *gorm.D
 	return nil
 }
 
+func (r *Repository) GetAllUserRepo(ctx context.Context, tx *gorm.DB, userList *[]model.User, limit int, offset int) error {
+	if tx == nil {
+		tx = r.DB().Ctx()
+	}
+	db := tx.WithContext(ctx)
+	if limit > 0 {
+		db = db.Limit(limit).Offset(offset)
+	}
+	if err := db.WithContext(ctx).Find(&userList).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
 func (r *Repository) InsertUserRepo(ctx context.Context, tx *gorm.DB, data model.User) (model.User, error) {
 	// * tx
 	if tx == nil {
