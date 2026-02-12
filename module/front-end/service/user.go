@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"net/http"
+	"time"
 
 	"github.com/tomatosAt/IT01-api/model"
 	"github.com/tomatosAt/IT01-api/module/front-end/dto"
@@ -14,6 +15,15 @@ import (
 
 func (s *Service) UserSVC(ctx context.Context, data dto.UserPayload) (*dto.DataInsertUser, int, error) {
 	var result dto.DataInsertUser
+	dobDate, err := time.Parse("2006-01-02", data.Dob)
+	if err != nil {
+		return &result, http.StatusBadRequest, errors.New("invalid date format")
+	}
+	dobYear := dobDate.Year()
+	currentYear := time.Now().Year()
+	if dobYear > currentYear {
+		return &result, http.StatusBadRequest, errors.New("birth year cannot be in the future")
+	}
 	// ENCRYPT ข้อมูล
 	encryptedData, _ := util.EncryptList(s.repo.AppCfg().Secret.EncryptKey, data.FirstNameTH, data.LastNameTH)
 	if err := s.repo.GetUserByFullNameAndDobRepo(ctx, nil, encryptedData[0], encryptedData[1], data.Dob); err != nil {
